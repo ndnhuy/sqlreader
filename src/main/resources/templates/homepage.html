@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+          table-layout: fixed;
+          width: 200px;
+        }
+        th, td {
+          padding: 5px;
+          word-wrap: break-word;
+        }
+        th {
+          text-align: left;
+        }
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+
+    </div>
+    <script>
+        var buildTable = function(rows, tableName) {
+            var table = document.createElement('table');
+
+            // generate header
+            var headerEl = document.createElement('tr');
+            var firstRow = rows[0];
+            var headers = [];
+            Object.keys(firstRow).map(k =>{
+                headers.push(k);
+                var th = document.createElement('th');
+                th.innerHTML = k;
+                return th;
+            }).forEach(th => headerEl.appendChild(th));
+            table.appendChild(headerEl);
+
+            // generate body
+            rows.map(row => headers.map(h => row[h]))
+                .map(values => {
+                    var tr = document.createElement('tr');
+                    values.forEach(v => {
+                        var td = document.createElement('td');
+                        td.innerHTML = v;
+                        tr.appendChild(td);
+                    });
+                    return tr;
+                }).forEach(tr => table.appendChild(tr));
+
+            document.body.appendChild(table);
+        };
+
+        var buildTables = function(tableData) {
+            Object.keys(tableData).forEach(tableName => buildTable(tableData[tableName], tableName));
+        };
+
+        var showRows = function(tableData) {
+            Object.keys(tableData).forEach(tableName => {
+                var rows = tableData[tableName];
+                var contentEl = document.getElementById('content');
+                var preEl = document.createElement('pre');
+                preEl.innerHTML = JSON.stringify(rows, null, 4);
+                contentEl.appendChild(preEl);
+            });
+        };
+
+        var request = new XMLHttpRequest();
+        request.open('GET', '/all', true);
+        request.onload = function() {
+            //buildTables(JSON.parse(this.response));
+            showRows(JSON.parse(this.response));
+            //  var data = JSON.parse(this.response);
+            //  console.log(Object.keys(data));
+            //  Object.entries(data).forEach((v, k) => console.log(v));
+        };
+        request.send();
+    </script>
+</body>
+</html>
