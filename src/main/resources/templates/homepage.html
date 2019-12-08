@@ -19,68 +19,72 @@
         }
         pre {
             white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .cm-string {
+            color: green !important;
+        }
+        .cm-property {
+            color: #aa1111 !important;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/javascript/javascript.js"></script>
 </head>
 <body>
+    <input id="search" type="text" name="search" onkeyup="search()">
     <div id="content">
-
     </div>
     <script>
-        var buildTable = function(rows, tableName) {
-            var table = document.createElement('table');
-
-            // generate header
-            var headerEl = document.createElement('tr');
-            var firstRow = rows[0];
-            var headers = [];
-            Object.keys(firstRow).map(k =>{
-                headers.push(k);
-                var th = document.createElement('th');
-                th.innerHTML = k;
-                return th;
-            }).forEach(th => headerEl.appendChild(th));
-            table.appendChild(headerEl);
-
-            // generate body
-            rows.map(row => headers.map(h => row[h]))
-                .map(values => {
-                    var tr = document.createElement('tr');
-                    values.forEach(v => {
-                        var td = document.createElement('td');
-                        td.innerHTML = v;
-                        tr.appendChild(td);
-                    });
-                    return tr;
-                }).forEach(tr => table.appendChild(tr));
-
-            document.body.appendChild(table);
+        var timeOutId;
+        var search = function() {
+            clearTimeout(timeOutId);
+            timeOutId = setTimeout(() => {
+                var searchEl = document.getElementById("search");
+                sendRequest('GET', `/search?text=${searchEl.value}`, resp => showRows(JSON.parse(resp)));
+            }, 500);
         };
-
-        var buildTables = function(tableData) {
-            Object.keys(tableData).forEach(tableName => buildTable(tableData[tableName], tableName));
-        };
-
         var showRows = function(tableData) {
+            var contentEl = document.getElementById('content');
+            // remove all children
+            while (contentEl.firstChild) {
+                contentEl.removeChild(contentEl.firstChild);
+            }
             Object.keys(tableData).forEach(tableName => {
-                var rows = tableData[tableName];
-                var contentEl = document.getElementById('content');
+                var rowsStr = tableData[tableName];
+                var rows = JSON.parse(rowsStr);
                 var preEl = document.createElement('pre');
                 preEl.innerHTML = JSON.stringify(rows, null, 4);
                 contentEl.appendChild(preEl);
             });
         };
 
-        var request = new XMLHttpRequest();
-        request.open('GET', '/all', true);
-        request.onload = function() {
-            //buildTables(JSON.parse(this.response));
-            showRows(JSON.parse(this.response));
-            //  var data = JSON.parse(this.response);
-            //  console.log(Object.keys(data));
-            //  Object.entries(data).forEach((v, k) => console.log(v));
+        var sendRequest = function(methodType, url, onload) {
+            var request = new XMLHttpRequest();
+            request.open(methodType, url, true);
+            request.onload = function() {
+                onload(this.response);
+            };
+            request.send();
         };
-        request.send();
+        //sendRequest('GET', '/all', resp => showRows(JSON.parse(resp)));
+        var codeMirror = CodeMirror(document.body, {
+            mode: {
+                name: 'javascript',
+                json: true
+            },
+            lineWrapping: true,
+            readOnly: true
+        });
+        sendRequest('GET', '/all', resp => {
+            var tableData = JSON.parse(resp);
+            var rowsStr = tableData[Object.keys(tableData)[0]];
+            var rows = JSON.parse(rowsStr);
+            codeMirror.setValue(JSON.stringify(rows, null, 4));
+            codeMirror.setSize('100%', '100%');
+        });
+
     </script>
 </body>
 </html>
