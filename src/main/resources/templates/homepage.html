@@ -42,22 +42,11 @@
             clearTimeout(timeOutId);
             timeOutId = setTimeout(() => {
                 var searchEl = document.getElementById("search");
-                sendRequest('GET', `/search?text=${searchEl.value}`, resp => showRows(JSON.parse(resp)));
+                sendRequest('GET', encodeURI(`/search?text=${searchEl.value}`), resp => showRows(JSON.parse(resp)));
             }, 500);
         };
         var showRows = function(tableData) {
-            var contentEl = document.getElementById('content');
-            // remove all children
-            while (contentEl.firstChild) {
-                contentEl.removeChild(contentEl.firstChild);
-            }
-            Object.keys(tableData).forEach(tableName => {
-                var rowsStr = tableData[tableName];
-                var rows = JSON.parse(rowsStr);
-                var preEl = document.createElement('pre');
-                preEl.innerHTML = JSON.stringify(rows, null, 4);
-                contentEl.appendChild(preEl);
-            });
+            Object.keys(tableData).forEach(tableName => codeMirror.setValue(tableData[tableName]));
         };
 
         var sendRequest = function(methodType, url, onload) {
@@ -68,7 +57,6 @@
             };
             request.send();
         };
-        //sendRequest('GET', '/all', resp => showRows(JSON.parse(resp)));
         var codeMirror = CodeMirror(document.body, {
             mode: {
                 name: 'javascript',
@@ -77,13 +65,8 @@
             lineWrapping: true,
             readOnly: true
         });
-        sendRequest('GET', '/all', resp => {
-            var tableData = JSON.parse(resp);
-            var rowsStr = tableData[Object.keys(tableData)[0]];
-            var rows = JSON.parse(rowsStr);
-            codeMirror.setValue(JSON.stringify(rows, null, 4));
-            codeMirror.setSize('100%', '100%');
-        });
+        codeMirror.setSize('100%', '100%');
+        sendRequest('GET', '/all', resp => showRows(JSON.parse(resp)));
 
     </script>
 </body>
