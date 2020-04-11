@@ -8,7 +8,7 @@ import java.util.Map;
 public class Tokenizer {
     private static Map<String, TokenType> lexemeToTokenType = new HashMap<>();
     public Tokenizer() {
-        lexemeToTokenType.put("SELECT", TokenType.KEYWORD);
+        lexemeToTokenType.put("SELECT", TokenType.SELECT);
         lexemeToTokenType.put("FROM", TokenType.KEYWORD);
         lexemeToTokenType.put("WHERE", TokenType.KEYWORD);
         lexemeToTokenType.put(",", TokenType.SEPARATOR);
