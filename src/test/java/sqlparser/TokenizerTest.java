@@ -14,17 +14,4 @@ public class TokenizerTest {
             System.out.println(t);
         }
     }
-
-    @Test
-    public void foo() throws IOException {
-        FileInputStream is = new FileInputStream("/Users/administrator/Documents/Daily Support/MCC7012561200406.txt");
-        BufferedReader bf = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = bf.readLine()) != null) {
-            if (line.contains("\"18514\",\"4010070125610")) {
-
-                System.out.println(line);
-            }
-        }
-    }
 }

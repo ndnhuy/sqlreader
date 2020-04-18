@@ -2,8 +2,13 @@ package sqlparser.parsetree;
 
 import sqlparser.Token;
 import sqlparser.TokenType;
+import sqlparser.parsetree.tokenconsumer.FromTokenConsumer;
+import sqlparser.parsetree.tokenconsumer.SelectTokenConsumer;
+import sqlparser.parsetree.tokenconsumer.WhereTokenConsumer;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ExpressionBuilder {
@@ -59,6 +64,43 @@ public class ExpressionBuilder {
                     TerminalExprNode node = new TerminalExprNode(tokenTypeIdentifier, currToken.getLexeme());
                 }
             }
+        }
+    }
+
+    static private Map<TokenType, TokenType> rules = new HashMap<>();
+    static {
+        rules.put(TokenType.SELECT, TokenType.FROM);
+        rules.put(TokenType.FROM, TokenType.WHERE);
+    }
+
+    public void build2(Iterator<Token> tokenIterator) {
+        if (!tokenIterator.hasNext()) {
+            throw new IllegalArgumentException("No tokens found");
+        }
+        NonTerminalExprNode root = new NonTerminalExprNode();
+        Token prev = null;
+        while (tokenIterator.hasNext()) {
+            Token currToken = tokenIterator.next();
+
+            // validate
+            if (prev != null
+                    && rules.containsKey(prev.getTokenType())
+                    && rules.get(prev.getTokenType()) != currToken.getTokenType()) {
+                throw new IllegalArgumentException(
+                        String.format("Should be %s, not %s", rules.get(prev.getTokenType()), currToken.getTokenType()));
+            }
+
+            if (currToken.getTokenType() == TokenType.SELECT) {
+                ExprNode exprNode = new SelectTokenConsumer().build(tokenIterator);
+                root.add(exprNode);
+            } else if (currToken.getTokenType() == TokenType.FROM) {
+                ExprNode exprNode = new FromTokenConsumer().build(tokenIterator);
+                root.add(exprNode);
+            } else if (currToken.getTokenType() == TokenType.WHERE) {
+                ExprNode exprNode = new WhereTokenConsumer().build(tokenIterator);
+                root.add(exprNode);
+            }
+            prev = currToken;
         }
     }
 }
