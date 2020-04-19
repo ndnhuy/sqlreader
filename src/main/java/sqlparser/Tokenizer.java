@@ -12,9 +12,13 @@ public class Tokenizer {
         lexemeToTokenType.put("FROM", TokenType.KEYWORD);
         lexemeToTokenType.put("WHERE", TokenType.KEYWORD);
         lexemeToTokenType.put(",", TokenType.SEPARATOR);
-        lexemeToTokenType.put("(", TokenType.SEPARATOR);
-        lexemeToTokenType.put(")", TokenType.SEPARATOR);
-        lexemeToTokenType.put("=", TokenType.OPERATOR);
+        lexemeToTokenType.put("(", TokenType.LEFT_BRACKET);
+        lexemeToTokenType.put(")", TokenType.RIGHT_BRACKET);
+        lexemeToTokenType.put("=", TokenType.EXPRESSION_OPERATOR);
+        lexemeToTokenType.put("<", TokenType.EXPRESSION_OPERATOR);
+        lexemeToTokenType.put(">", TokenType.EXPRESSION_OPERATOR);
+        lexemeToTokenType.put("AND", TokenType.CONDITIONAL_OPERATOR);
+        lexemeToTokenType.put("OR", TokenType.CONDITIONAL_OPERATOR);
     }
     public List<Token> produceTokens(String source) {
         List<Token> tokens = new ArrayList<>();

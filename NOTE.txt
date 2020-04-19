@@ -1,0 +1,23 @@
+<query> -> SELECT <columnIdentifierList> |
+           SELECT <columnIdentifierList> FROM <tableIdentifierList> |
+           SELECT <columnIdentifierList> FROM <tableIdentifierList> WHERE <predicate>
+
+<predicate> -> (<predicate>)
+               <predicate> AND <predicate> |
+               <predicate> OR <predicate> |
+               <columnIdentifier> = <expression>
+
+<expression> -> <literal>
+                <predicate> |
+                (expression)
+
+select * from movies where a = b and c = d or e = f
+select * from movies where a = ((...) and (...)) and c = d or e = f
+select * from movies where a = b and (c = d or e = f)
+select * from movies where a = (c and d = 5)
+
+if =, create expression node
+if is expression and encounter AND|OR, then
+
+
+

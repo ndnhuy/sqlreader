@@ -34,4 +34,19 @@ public class TerminalExprNode implements ExprNode {
     public Iterator<ExprNode> iterator() {
         return Collections.emptyIterator();
     }
+
+    @Override
+    public String toString() {
+        return print(",");
+    }
+
+    @Override
+    public int height() {
+        return 0;
+    }
+
+    @Override
+    public String print(String separator) {
+        return value;
+    }
 }

@@ -11,17 +11,17 @@ public class IdentifierListTokenConsumer implements TokenConsumer {
     @Override
     public ExprNode build(LookForwardIterator<Token> tokenIterator) {
         NonTerminalExprNode identifierList = new NonTerminalExprNode();
-        TokenType nextTokenType = TokenType.IDENTIFIER;
+        TokenType expectTokenType = TokenType.IDENTIFIER;
         while (tokenIterator.hasNext()) {
             Token nextToken = tokenIterator.lookForward();
-            if (nextTokenType == TokenType.SEPARATOR) {
-                if (nextToken.getTokenType() != nextTokenType) {
+            if (expectTokenType == TokenType.SEPARATOR) {
+                if (nextToken.getTokenType() != expectTokenType) {
                     return identifierList;
                 }
             }
-            if (nextToken.getTokenType() != nextTokenType) {
-                throw new ParsingError("Must be " + nextTokenType);
-            } else if (nextTokenType == TokenType.SEPARATOR) {
+            if (nextToken.getTokenType() != expectTokenType) {
+                throw new ParsingError("Must be " + expectTokenType);
+            } else if (expectTokenType == TokenType.SEPARATOR) {
                 if (!",".equals(nextToken.getLexeme())) {
                     throw new ParsingError("Separator must be ,");
                 }
@@ -29,11 +29,14 @@ public class IdentifierListTokenConsumer implements TokenConsumer {
             Token currToken = tokenIterator.next();
             TerminalExprNode tokenNode = new TerminalExprNode(currToken.getTokenType(), currToken.getLexeme());
             identifierList.add(tokenNode);
-            if (nextTokenType == TokenType.IDENTIFIER) {
-                nextTokenType = TokenType.SEPARATOR;
+            if (expectTokenType == TokenType.IDENTIFIER) {
+                expectTokenType = TokenType.SEPARATOR;
             } else {
-                nextTokenType = TokenType.IDENTIFIER;
+                expectTokenType = TokenType.IDENTIFIER;
             }
+        }
+        if (expectTokenType == TokenType.IDENTIFIER) {
+            throw new ParsingError("Expect an " + TokenType.IDENTIFIER.code());
         }
         return identifierList;
     }

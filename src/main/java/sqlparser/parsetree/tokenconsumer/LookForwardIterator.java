@@ -1,37 +1,38 @@
 package sqlparser.parsetree.tokenconsumer;
 
-import sqlparser.Token;
-
-import java.util.ArrayDeque;
 import java.util.Iterator;
-import java.util.Queue;
 
 public class LookForwardIterator<T> implements Iterator<T> {
 
     private Iterator<T> iterator;
-    private Queue<T> stashedTokens = new ArrayDeque<>();
+    private T nextToken;
 
     public LookForwardIterator(Iterator<T> iterator) {
         this.iterator = iterator;
     }
 
     public T lookForward() {
+        if (nextToken != null) {
+            return nextToken;
+        }
         T token = iterator.next();
-        stashedTokens.add(token);
+        nextToken = token;
         return token;
     }
 
     @Override
     public boolean hasNext() {
-        return iterator.hasNext() || !stashedTokens.isEmpty();
+        return iterator.hasNext() || nextToken != null;
     }
 
     @Override
     public T next() {
-        if (stashedTokens.isEmpty()) {
+        if (nextToken == null) {
             return iterator.next();
         } else {
-            return stashedTokens.remove();
+            T res = nextToken;
+            nextToken = null;
+            return res;
         }
     }
 }

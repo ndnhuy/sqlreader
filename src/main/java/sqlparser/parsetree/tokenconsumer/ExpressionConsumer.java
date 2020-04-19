@@ -14,7 +14,7 @@ public class ExpressionConsumer implements TokenConsumer {
 
     static {
         ACCEPTED_TOKENS.put(TokenType.IDENTIFIER, "*");
-        ACCEPTED_TOKENS.put(TokenType.OPERATOR, "=,>,<");
+        ACCEPTED_TOKENS.put(TokenType.EXPRESSION_OPERATOR, "=,>,<");
         ACCEPTED_TOKENS.put(TokenType.LITERAL, "*");
     }
 
@@ -35,8 +35,8 @@ public class ExpressionConsumer implements TokenConsumer {
             root.add(tokenNode);
 
             if (currToken.getTokenType() == TokenType.IDENTIFIER) {
-                expectNextToken = TokenType.OPERATOR;
-            } else if (currToken.getTokenType() == TokenType.OPERATOR) {
+                expectNextToken = TokenType.EXPRESSION_OPERATOR;
+            } else if (currToken.getTokenType() == TokenType.EXPRESSION_OPERATOR) {
                 expectNextToken = TokenType.LITERAL;
             } else if (currToken.getTokenType() == TokenType.LITERAL) {
                 return root;
