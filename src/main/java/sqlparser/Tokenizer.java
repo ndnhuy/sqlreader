@@ -8,17 +8,20 @@ import java.util.Map;
 public class Tokenizer {
     private static Map<String, TokenType> lexemeToTokenType = new HashMap<>();
     public Tokenizer() {
-        lexemeToTokenType.put("SELECT", TokenType.SELECT);
-        lexemeToTokenType.put("FROM", TokenType.KEYWORD);
-        lexemeToTokenType.put("WHERE", TokenType.KEYWORD);
+        lexemeToTokenType.put("SELECT", TokenType.STATEMENT);
+        lexemeToTokenType.put("FROM", TokenType.CLAUSE);
+        lexemeToTokenType.put("WHERE", TokenType.CLAUSE);
+        lexemeToTokenType.put("GROUP", TokenType.CLAUSE);
+        lexemeToTokenType.put("ORDER", TokenType.CLAUSE);
         lexemeToTokenType.put(",", TokenType.SEPARATOR);
         lexemeToTokenType.put("(", TokenType.LEFT_BRACKET);
         lexemeToTokenType.put(")", TokenType.RIGHT_BRACKET);
-        lexemeToTokenType.put("=", TokenType.EXPRESSION_OPERATOR);
-        lexemeToTokenType.put("<", TokenType.EXPRESSION_OPERATOR);
-        lexemeToTokenType.put(">", TokenType.EXPRESSION_OPERATOR);
-        lexemeToTokenType.put("AND", TokenType.CONDITIONAL_OPERATOR);
-        lexemeToTokenType.put("OR", TokenType.CONDITIONAL_OPERATOR);
+        lexemeToTokenType.put("=", TokenType.COMPARISON_OPERATOR);
+        lexemeToTokenType.put("<", TokenType.COMPARISON_OPERATOR);
+        lexemeToTokenType.put(">", TokenType.COMPARISON_OPERATOR);
+        lexemeToTokenType.put("AND", TokenType.LOGICAL_OPERATOR);
+        lexemeToTokenType.put("OR", TokenType.LOGICAL_OPERATOR);
+        lexemeToTokenType.put(";", TokenType.IDENTIFIER);
     }
     public List<Token> produceTokens(String source) {
         List<Token> tokens = new ArrayList<>();
@@ -28,9 +31,9 @@ public class Tokenizer {
             if (lexemeToTokenType.containsKey(lexeme)) {
                 tokens.add(new Token(lexeme, lexemeToTokenType.get(lexeme)));
             } else {
-                if (lexeme.startsWith("\"")) {
-                    tokens.add(new Token(lexeme, TokenType.LITERAL));
-                } else {
+                if (lexeme.startsWith("\"") || lexeme.startsWith("\'")) {
+                    tokens.add(new Token(lexeme, TokenType.STRING_LITERAL));
+                } else if (!lexeme.equalsIgnoreCase("\n")) {
                     tokens.add(new Token(lexeme, TokenType.IDENTIFIER));
                 }
             }

@@ -19,6 +19,8 @@ public class Scanner {
             }
             switch (c) {
                 case ' ':
+                case '\n':
+                case ';':
                     add(lexemes, sb.toString());
                     sb.setLength(0);
                     break;

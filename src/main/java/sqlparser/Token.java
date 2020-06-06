@@ -27,6 +27,6 @@ public class Token {
 
     @Override
     public String toString() {
-        return String.format("%s | %s", lexeme, tokenType.name());
+        return String.format("%s#%s", lexeme, tokenType.name());
     }
 }
