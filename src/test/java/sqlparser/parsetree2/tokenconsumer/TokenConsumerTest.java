@@ -64,6 +64,6 @@ public class TokenConsumerTest {
                         "  revenue,\n" +
                         "  o_orderdate;";
         ASTNode node = tokenConsumer.build(tokenizer.produceTokens(sql));
-        System.out.println(node.print("|"));
+        System.out.println(new ASTNodePrinter(node).print());
     }
 }

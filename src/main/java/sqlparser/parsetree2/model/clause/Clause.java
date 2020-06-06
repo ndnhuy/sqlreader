@@ -1,4 +1,4 @@
-package sqlparser.parsetree2;
+package sqlparser.parsetree2.model.clause;
 
 public interface Clause {
     String getLabel();

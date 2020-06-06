@@ -1,5 +1,6 @@
 package sqlparser.parsetree2.tokenconsumer;
 
+import sqlparser.Token;
 import sqlparser.TokenType;
 
 import java.util.HashSet;
@@ -8,8 +9,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 public class ASTNode implements Iterable<ASTNode> {
-    private String label;
-    private TokenType tokenType;
+    private Token token;
     private ASTNode next;
     private ASTNode prev;
     private ASTNode headChild;
@@ -18,13 +18,16 @@ public class ASTNode implements Iterable<ASTNode> {
     private Set<ASTNode> childrenSet = new HashSet<>();
     private int size;
 
+    public ASTNode(Token token) {
+        this.token = token;
+    }
+
     public ASTNode(String label, TokenType tokenType) {
-        this.label = label;
-        this.tokenType = tokenType;
+        this.token = new Token(label, tokenType);
     }
 
     public TokenType getTokenType() {
-        return tokenType;
+        return token.getTokenType();
     }
 
 
@@ -38,6 +41,14 @@ public class ASTNode implements Iterable<ASTNode> {
 
     public ASTNode getNext() {
         return next;
+    }
+
+    public String getLabel() {
+        return this.token.getLexeme();
+    }
+
+    public Token getToken() {
+        return this.token;
     }
 
     public ASTNode remove(ASTNode cNode) {
@@ -116,9 +127,9 @@ public class ASTNode implements Iterable<ASTNode> {
             for (ASTNode node : this) {
                 joiner.add(node.print(separator));
             }
-            return this.label + "#" + joiner.toString();
+            return getLabel() + "#" + joiner.toString();
         } else {
-            return label;
+            return getLabel();
         }
     }
 }

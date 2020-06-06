@@ -25,7 +25,7 @@ public class TokenConsumer {
         for (int i = 1; i < tokens.size(); i++) {
             Token t = tokens.get(i);
             if (TokenType.CLAUSE == t.getTokenType()) {
-                ASTNode node = new ASTNode(t.getLexeme(), t.getTokenType());
+                ASTNode node = new ASTNode(t);
                 nodeRef.getParent().insert(node);
                 nodeRef = node;
             } else if (TokenType.LEFT_BRACKET == t.getTokenType()) {
@@ -33,14 +33,14 @@ public class TokenConsumer {
                 nodeRef.insert(node);
                 nodeRef = node;
 
-                ASTNode lNode = new ASTNode(t.getLexeme(), t.getTokenType());
+                ASTNode lNode = new ASTNode(t);
                 nodeRef.insert(lNode);
             } else if (TokenType.RIGHT_BRACKET == t.getTokenType()) {
-                ASTNode node = new ASTNode(t.getLexeme(), t.getTokenType());
+                ASTNode node = new ASTNode(t);
                 nodeRef.insert(node);
                 nodeRef = nodeRef.getParent();
             } else {
-                ASTNode node = new ASTNode(t.getLexeme(), t.getTokenType());
+                ASTNode node = new ASTNode(t);
                 nodeRef.insert(node);
             }
         }
